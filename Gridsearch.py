@@ -70,6 +70,11 @@ def computevelocities(lfe,nt=5):
     if type(lfe)==int:
         lfe = '{:03d}'.format(lfe)    
 
+    # Get lfe coordinates
+    lfeloc = readlfeloc()
+    xl,yl = lfeloc[lfe]['xy']
+    zl    = lfeloc[lfe]['z']*1000.
+
     # Get closest LFEs
     dists, names = getclosestsLFE(lfe,nt=None)
 
@@ -404,4 +409,69 @@ def makegrid(gridtype,dim,npoints,removecenter=False,returnLL=False,center=(0.,0
     else:
         return X,Y
     
+
+
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+def makeblanketgrid(dx,mdist,removecenter=False,returnLL=False):
+    '''
+    Blanket cascadia with points and remove those too far from template
+    Args:
+        * dx       : Spacing between points (in m) 
+        * mdist    : Maximum distance to template
+        * removecenter [OPT] : Remove point in the center (def=False)
+        * center [OPT]       : Center of the grid (x,y,z UTM), typically a LFE position
+        * returmLL [OPT]     : If True, also return lon/lat location (def=False) 
+
+    Return:
+        * X,Y     : 2 arrays of X and Y horixontal positions
+    '''
+    
+    # Create converter from ll to utm
+    string = '+proj=utm +lat_0={} +lon_0={} +ellps={}'.format(48.5, -123.6, 'WGS84')
+    putm = pp.Proj(string)
+
+    # Define bounds
+    minlo = -124.5; minla = 48.0
+    maxlo = -123.0; maxla = 49.0
+    minx,miny = putm(minlo,minla)
+    maxx,maxy = putm(maxlo,maxla)
+
+    # Make Grid
+    x = np.arange(minx,maxx,dx)
+    y = np.arange(miny,maxy,dx)
+    X,Y = np.meshgrid(x,y)
+    X = X.flatten()
+    Y = Y.flatten()
+
+    # Initialize final grids
+    Xs = []
+    Ys = []
+    Zs = []
+    Ns = [] # Names of closest LFE
+    # get LFE loc
+    lfeloc = readlfeloc()
+
+    for i in range(len(X)):
+        z = InterpolateLFEDepth(X[i],Y[i],utm=True)*1000. # Get depth
+        d,n = getclosestsLFE2point(X[i],Y[i],z)
+        
+        # If close enough
+        if d<=mdist:
+            Xs.append(X[i])
+            Ys.append(Y[i])
+            Zs.append(z)
+            Ns.append(n)
+
+    # Make arrays
+    Xs = np.array(Xs)
+    Ys = np.array(Ys)
+    Zs = np.array(Zs)
+    Ns = np.array(Ns)
+
+    # All done
+    return Xs,Ys,Zs,Ns
+    
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 

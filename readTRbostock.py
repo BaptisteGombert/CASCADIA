@@ -219,7 +219,7 @@ def readTRbostock():
     import os,datetime
     import numpy as np
 
-    fdir  = os.path.join(os.environ['DATA'],'TREMOR','Bostock')
+    fdir  = os.path.join(os.environ['DATA'],'TREMOR','Cascadia')
     fdir2 = os.path.expanduser('~/data/tremors')
     fname = 'total_mag_detect_0000_cull.txt'
     

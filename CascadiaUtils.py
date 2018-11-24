@@ -158,7 +158,6 @@ def getLFESTAdist(lfeloc,staloc,lfe,sta,vert=True):
 
     return d
 
-
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 def getclosestsLFE(lfe,nt=None):
@@ -211,7 +210,39 @@ def getclosestsLFE(lfe,nt=None):
         ix = ix[:nt]
 
     # All done
-    return dists[ix], names[ix]
+    return dists[ix], names[ix]     
+
+
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+def getclosestsLFE2point(xl,yl,zl):
+    '''
+    Get closest LFEs to a point
+    Args:
+        * x,y,z position of the point (in m)
+    Returns:
+        * d: istance to closest LFE template
+        * name: Which one it is 
+    '''
+
+    dmin = 99999999.
+    name = 'ERR'
+    lfeloc = readlfeloc()
+
+    for k in lfeloc.keys():
+        # get lfe loc
+        x2,y2 = lfeloc[k]['xy']
+        z2    = lfeloc[k]['z']*1000.
+        
+        # Compute distance
+        d = np.sqrt((x2-xl)**2+(y2-yl)**2+(z2-zl)**2)
+        
+        if d<dmin:
+            dmin = d
+            name = k        
+
+    # All done
+    return dmin, name
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
