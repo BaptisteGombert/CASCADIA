@@ -218,11 +218,15 @@ def readTRbostock():
     
     import os,datetime
     import numpy as np
+    import pytz
 
     fdir  = os.path.join(os.environ['DATA'],'TREMOR','Cascadia')
     fdir2 = os.path.expanduser('~/data/tremors')
     fname = 'total_mag_detect_0000_cull.txt'
     
+    utc=pytz.timezone('UTC')
+
+
     try:
         fl = open(os.path.join(fdir,fname),'r')
     except:
@@ -258,6 +262,7 @@ def readTRbostock():
         dt=datetime.datetime(year=yr,month=int(vl[1][2:4]),
                              day=int(vl[1][4:6]),hour=hr)
         dt=dt+datetime.timedelta(minutes=0,seconds=sc,milliseconds=ms)
+        dt.astimezone(utc)
 
         # add to list
         nm.append(int(vl[5]))
