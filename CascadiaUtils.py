@@ -127,6 +127,68 @@ def readstaloc():
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
+def dealwithcrappydata(D):
+    '''
+    Remove known problems in data, especially from CN
+    network because it's shite 
+    '''
+    
+    # Copy so you dont mess up original
+    data = D.copy()
+    
+    # Mask obvious pbs    
+    for tr in data:
+        # Make masked array if not already
+        if not isinstance(tr.data,np.ma.masked_array):
+            tr.data=np.ma.masked_array(tr.data,mask=False)
+        
+        # Mask values -12345 bc they come from crappy SACs
+        tr.data.mask=np.logical_or(tr.data.mask,tr.data==-12345)
+        
+        # Mask abnormally large values 
+        tr.data = np.ma.masked_outside(tr.data,-1e6,1e6)
+        
+        # Remove pb of end of hour in CN network
+        if tr.stats.network=='CN':
+            cutoff= int(-72./tr.stats.delta)    
+            if tr.stats.starttime.hour==23:
+                # At the end
+                tr.data.mask[cutoff:] = True
+            if tr.stats.starttime.hour==0:
+                # At the beginning
+                if tr.data.mask[1]==True:
+                    tr.data.mask[cutoff:] = True
+
+                elif round(tr.data[1])==0:
+                    tr.data.mask[cutoff:] = True
+
+        # Deal with crappy stations in CN
+        if tr.stats.station=='BMSB':
+            data.remove(tr)
+        if tr.stats.station=='PFB':
+            tc = obspy.UTCDateTime(2010,8,25,20,41)
+            if tr.stats.endtime < tc:
+                tr.data.mask[:] = True 
+            elif ((tr.stats.endtime>tc)&(tr.stats.starttime<tc)):
+                dt = tr.stats.delta # sampling rate
+                sc = tc - tr.stats.starttime # seconds between start of trace and cutoff
+                ic = int(sc/dt) # corresponding position in trace
+                tr.data.mask[0:ic] = True
+   
+        # Deal with Transportable Array station
+        if tr.stats.station=='A04D':
+            yday = tr.stats.starttime.date.timetuple().tm_yday
+            if yday==231:
+                if tr.stats.starttime.hour<6:
+                    tr.data.mask[:] = True
+            elif yday==236:
+                tr.data.mask[:]=True
+                
+    
+    return data
+
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 def getLFESTAdist(lfeloc,staloc,lfe,sta,vert=True):
     '''
     Get distance between a lfe template and a station
