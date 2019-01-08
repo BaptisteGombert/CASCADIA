@@ -24,11 +24,14 @@ def readdata(t1,t2):
     q = session.query(Waveform)
     res = []
     t = 0; c = 0
+    '''
     while len(res)==0:
         res = q.filter((Waveform.starttime>=t1.timestamp-t) & (Waveform.endtime<=t2.timestamp)).all()
         t += 1*3600.
         c += 1
-    
+    '''
+    t = 7200.
+    res = q.filter((Waveform.starttime>=t1.timestamp-t) & (Waveform.endtime<=t2.timestamp+t)).all()
     S = obspy.Stream()
     for r in res:
         S.append(r.waveform()[0]) # Put everything in a Stream
