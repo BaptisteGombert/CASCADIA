@@ -411,7 +411,6 @@ def removeunpicked(T,copy=False):
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 def getCommonTraces(D,T):
-
     '''
     Get common traces (i.e. same station ans channel) between 
     the template and station
