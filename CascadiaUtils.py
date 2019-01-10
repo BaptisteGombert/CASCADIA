@@ -495,6 +495,77 @@ def getCommonTraces(D,T):
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
+def getBestTemplates(T,n=4,method='snr',win=5.,nt=None):
+    '''
+    Get n best templates according to selected criteria
+    Args:
+            * T     : stream of templates
+            * n     : Number of station to consider (default=4)
+            * method: What crieria to use to select traces? Must be in 
+                      ['snr','amp','dist'] (default='snr')
+            * win   : If using SNR, how long should the signal window be? 
+                      (default= 5. seconds)
+            * nt    : if using distance criteria, what is the template of 
+                      interest? (default=None)
+    Returns:
+            * S     : obspy.Stream() containing the traces of the n best stations
+    '''
+
+    # Create empty stream to store best templates
+    S = obspy.Stream()
+    stas = [] # list of stations
+
+    # Which method to use?
+    if method is 'amp': # Highest (absolute) amplitude
+        ixs = np.abs(T.max()).argsort()
+        ixs = ixs[::-1] # Transform highest to lowest
+        
+    elif method is 'snr': # Highest SNR ratio
+        snr = []
+        for tr in T: # loop in traces
+            ind =  int(np.floor(tr.stats.t0/tr.stats.delta)) # Where is pick?
+            ind2 = int(ind+np.floor(win/tr.stats.delta)) # Where to stop considering data=signal ?
+            Anoise = (tr.data[:ind]**2).sum()/len(tr.data[:ind]) # RMS noise
+            Asigma = (tr.data[ind:ind2]**2).sum()/len(tr.data[ind:ind2]) # RMS signal
+            snr.append(Asigma/Anoise) # Store SNR
+        ixs = np.array(snr).argsort() # Sort lowest to highest
+        ixs = ixs[::-1] # Makes it highest to lowest
+        
+    elif method is 'dist': # Closest stations
+        assert nt is not None,'You must provide template number nt'
+
+        # read few stuff
+        staloc = readstaloc()
+        lfeloc = readlfeloc()
+        dist = []
+        for tr in T: # loop in traces
+            # get lfe/station distance 
+            dist.append(getLFESTAdist(lfeloc,staloc,246,tr.stats.station))
+        ixs = np.array(dist).argsort() # Sort lowest to highest
+
+    else:
+        print('method must be dist, snr or amp')
+        sys.exit()
+
+    # Get n first stations
+    k = 0
+    while len(stas)<n: # While not enough stations of interest
+        sta = T[ixs[k]].stats.station 
+        if sta not in stas:
+            stas.append(sta) 
+        k += 1
+
+    # Select traces from stations of interest
+    for st in stas: 
+        tmp = T.select(station=st) 
+        [S.append(tr) for tr in tmp] 
+
+    # That's all folks
+    return S
+
+
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 def plottemplate(T,offset=0.04,color=None,title=None,text=True):
     '''
     Make a quick and dirty plot of many waveforms
