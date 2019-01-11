@@ -262,7 +262,7 @@ def readTRbostock():
         dt=datetime.datetime(year=yr,month=int(vl[1][2:4]),
                              day=int(vl[1][4:6]),hour=hr)
         dt=dt+datetime.timedelta(minutes=0,seconds=sc,milliseconds=ms)
-        dt.astimezone(utc)
+        #dt=dt.astimezone(utc)
 
         # add to list
         nm.append(int(vl[5]))
