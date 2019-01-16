@@ -398,6 +398,19 @@ def makegrid(gridtype,dim,npoints,removecenter=False,returnLL=False,center=(0.,0
         X = np.array(X)*dx+center[0]
         Y = np.array(Y)*dx+center[1]
 
+    elif gridtype is 'square':
+        nx = round(np.sqrt(npoints))
+        dx = float(dim)/nx
+        x = np.linspace(-nx*dx,(nx+0)*dx,nx)
+        if not removecenter and 0. not in x:
+            x = np.linspace(-nx*dx,(nx+0)*dx,nx+1)
+        else:
+            x = np.linspace(-nx*dx,(nx+0)*dx,nx)
+
+        X,Y = np.meshgrid(x,x)
+        X += center[0]
+        Y += center[1]
+
     if returnLL:
         # Create converter from ll to utm
         string = '+proj=utm +lat_0={} +lon_0={} +ellps={}'.format(48.5, -123.6, 'WGS84')
