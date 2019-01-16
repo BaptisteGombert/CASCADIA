@@ -280,11 +280,12 @@ def getclosestsLFE(lfe,nt=None):
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
-def getclosestsLFE2point(xl,yl,zl):
+def getclosestsLFE2point(xl,yl,zl,nt=None):
     '''
     Get closest LFEs to a point
     Args:
         * x,y,z position of the point (in m)
+        * nt:  how many templates to return (def=None) 
     Returns:
         * d: istance to closest LFE template
         * name: Which one it is 
@@ -294,6 +295,8 @@ def getclosestsLFE2point(xl,yl,zl):
     name = 'ERR'
     lfeloc = readlfeloc()
 
+    dmins = []
+
     for k in lfeloc.keys():
         # get lfe loc
         x2,y2 = lfeloc[k]['xy']
@@ -302,12 +305,26 @@ def getclosestsLFE2point(xl,yl,zl):
         # Compute distance
         d = np.sqrt((x2-xl)**2+(y2-yl)**2+(z2-zl)**2)
         
+        # Add to list in case you need several
+        dmins.append(d) 
+        names.append(k)
+
         if d<dmin:
             dmin = d
             name = k        
 
+    dmins = np.array(dmins)
+    names = np.array(names)
+    ix = np.argsort(dmins)
+    
+    # Return what is asked: 
     # All done
-    return dmin, name
+    if nt is None:
+        return dmin, name
+    else:
+        nt = int(nt)
+        ix = ix[:nt]
+        return dmin[ix],names[ix]
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
