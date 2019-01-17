@@ -402,12 +402,13 @@ def makegrid(gridtype,dim,npoints,removecenter=False,returnLL=False,center=(0.,0
         nx = round(np.sqrt(npoints))
         dx = float(dim)/nx
         x = np.linspace(-nx*dx,(nx+0)*dx,nx)
-        if not removecenter and 0. not in x:
-            x = np.linspace(-nx*dx,(nx+0)*dx,nx+1)
-        else:
-            x = np.linspace(-nx*dx,(nx+0)*dx,nx)
 
         X,Y = np.meshgrid(x,x)
+        X = X.flatten()
+        Y = Y.flatten()
+        if not removecenter and 0. not in x:
+            X = np.append(X,0.)
+            Y = np.append(Y,0.)
         X += center[0]
         Y += center[1]
 
