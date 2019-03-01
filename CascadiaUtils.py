@@ -42,6 +42,25 @@ def readdata(t1,t2):
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
+def readinventory(net,sta):
+    ''' 
+    Read stationxml file and return inventory
+    Args:
+        * net : network of trance
+        * sta : You guessed it: the station name
+    Return
+        * obspy inventory object
+    '''
+
+    paf = os.path.join(os.environ['SDATA'],'RESP')
+    fid = os.path.join(paf,'{}.{}.xml'.format(net,sta))
+
+    inv = obspy.read_inventory(fid)
+
+    return inv
+
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 def readtemplate(N):
     '''
     Get templates number N and return a Stream
