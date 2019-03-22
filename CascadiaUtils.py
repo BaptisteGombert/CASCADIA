@@ -14,13 +14,13 @@ from waveformtable import Waveform
 
 from os.path import join
 
-def readdata(t1,t2):
+def readdata(t1,t2,dbname='cascadia'):
     '''
     Get waveforms beteen two dates (obspy.UTCDateTime) t1 and t2.
     '''
 
     # Get correponding waveforms
-    session = opendatabase('cascadia')
+    session = opendatabase(dbname)
     q = session.query(Waveform)
     res = []
     t = 0; c = 0
