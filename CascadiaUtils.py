@@ -666,6 +666,11 @@ def getAlongStrikeDist(x,y,utm=True,contour=40):
     if utm==False:
         x,y = putm(x,y)
 
+    # Check stuff
+    if type(x) in [int,float]:
+        x = [x]
+        y = [y]
+
     # Limit to northern part
     ix = np.where((S[:,1]>=48.)&(S[:,1]<=50.))[0]
     Sx,Sy = putm(S[ix,0],S[ix,1])
