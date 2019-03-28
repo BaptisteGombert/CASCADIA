@@ -24,6 +24,9 @@ def readstraindata(stn,channel='L',years='all'):
             * year    : list of years to read. 'all' (default), int, or list
     '''
 
+    # Check something
+    assert(channel in ['L','R']),'channel must be L or R'
+
     # Which years to read?
     if years == 'all':
         years = [2005,2006,2007,2008,2009,2010,\
@@ -33,7 +36,7 @@ def readstraindata(stn,channel='L',years='all'):
         years = [years]
 
     # Get path to strain data
-    paf = join(os.environ['STRAINDATA'],'PROCESSED2')
+    paf = join(os.environ['STRAINDATA'],'PROCESSED2',channel)
 
     # Create empty stream 
     S = obspy.Stream()
