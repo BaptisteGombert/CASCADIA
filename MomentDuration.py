@@ -150,7 +150,7 @@ class MDplot():
     
     def __init__(self,show=False):
         # Create figure
-        fig,ax = plt.subplots(facecolor='w')
+        fig,ax = plt.subplots(facecolor='w',figsize=(10.5,9))
          
         # Make titles
         ax.set_xlabel('Seismic moment (N.m/s)')
