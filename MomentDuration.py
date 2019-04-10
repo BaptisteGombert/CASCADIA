@@ -250,17 +250,23 @@ class MDplot():
         return
 
 # ----------------------------------------------------------------------------------------------
-    def addpoints(self,m0,T,marker='+',color='orange'):
+    def addpoints(self,m0,T,m0err=None,Terr=None,marker='+',color='orange'):
         '''
         Add points on the plot
         Args:
             * m0     : moment values
             * T      : Duration
+            * m0err  : std of m0 values (def='None')
+            * Terr   : std of T values (def='None')
             * marker : markertype (def='+')
             * color  : color of marker (def='orange')
         '''
 
         # Plot that shit
-        self.ax.loglog(m0,T,marker=marker,linestyle='',c=color,label='This study') 
-
-        # return
+        if (m0err is None)&(Terr is None):
+            self.ax.loglog(m0,T,marker=marker,linestyle='',c=color,label='This study') 
+        else:
+            self.ax.errorbar(m0,T,xerr=m0err,yerr=Terr,marker=marker,linestyle='',c=color,label='This study') 
+        
+        # All done   
+        return
