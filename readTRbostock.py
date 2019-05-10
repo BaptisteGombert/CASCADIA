@@ -260,7 +260,7 @@ def readTRbostock():
         hr=int(vl[2]) - 1
 
         dt=datetime.datetime(year=yr,month=int(vl[1][2:4]),
-                             day=int(vl[1][4:6]),hour=hr)
+                             day=int(vl[1][4:6]),hour=hr,tzinfo=utc)
         dt=dt+datetime.timedelta(minutes=0,seconds=sc,milliseconds=ms)
         #dt=dt.astimezone(utc)
 
