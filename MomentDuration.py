@@ -11,7 +11,19 @@ import matplotlib.pyplot as plt
 import matplotlib.transforms as mtransforms
 from mpl_toolkits.axes_grid1.parasite_axes import SubplotHost
 
-class slowevents:
+class Bleteryevents:
+    '''
+    Class to store results from Bletery et al. 2016
+    '''
+    def __init__(self):
+        # Supp from Bletery
+        self.fid = join(os.environ['DATA'],'ssf-lfe_V2.txt')
+        M = np.loadtxt(self.fid)
+        self.duration   = M[:,10] *60.*60.
+        self.M0         = M[:,16]
+
+
+class Gaoevents:
     '''
     Class to store results of Gao et al. 2012
     '''
@@ -166,6 +178,8 @@ class MDplot():
 
 
         self.addGaodata()
+        self.addBleterydata()
+        self.addLFEs()
         self.mwaxis()
         self.addisotimelines()
         self.addscalinglines()
@@ -174,18 +188,48 @@ class MDplot():
         return 
 
 # ----------------------------------------------------------------------------------------------
-    def addGaodata(self):
+    def addGaodata(self,onlyETS=True):
         '''
         Plot Gao et al. data (2012)
         '''
 
         # Get data points
-        data = slowevents()
+        data = Gaoevents()
+        M0 = data.M0
+        duration = data.duration
+        if onlyETS:
+            ix = np.where(duration>1000)[0]
+            duration = duration[ix]
+            M0 = M0[ix]
 
         # Plot them
-        #self.ax.plot(np.log10(data.M0),np.log10(data.duration),'k.')
-        self.ax.loglog(data.M0,data.duration,marker='^',linestyle='',c='navy',label='Gao et al. (2012)')
+        self.ax.loglog(M0,duration,marker='^',linestyle='',c='navy',label='Gao et al. (2012)')
 
+        return
+
+# ----------------------------------------------------------------------------------------------
+    def addBleterydata(self):
+        '''
+        Plot Bletery et al. data (2016)
+        '''
+
+        # Get data points
+        data = Bleteryevents()
+
+        # Plot them
+        self.ax.loglog(data.M0,data.duration,marker='s',linestyle='',c='olive',label='Bletery et al. (2016)')
+
+        return
+
+# ----------------------------------------------------------------------------------------------
+    def addLFEs(self):
+        '''
+        Plot Ide et a. 2007 LFE MD
+        '''
+        self.ax.scatter(10**(11.4),0.35,color='teal',s=2000,marker='s')
+        self.ax.scatter(10**(11.4),0.35,color='teal',s=50,marker='s',label='Ide et al. (2007)')
+        self.ax.scatter(10**(13.9),20,color='dodgerblue',s=300,marker='s')
+        self.ax.scatter(10**(13.9),20,color='dodgerblue',s=50,marker='s',label='Ito et al. (2007)')       
         return
 
 # ----------------------------------------------------------------------------------------------
