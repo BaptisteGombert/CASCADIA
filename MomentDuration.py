@@ -10,6 +10,21 @@ from os.path import join,expanduser
 import matplotlib.pyplot as plt
 import matplotlib.transforms as mtransforms
 from mpl_toolkits.axes_grid1.parasite_axes import SubplotHost
+import matplotlib
+
+fontname='times new roman'
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+matplotlib.rcParams['xtick.labelsize'] = 14
+matplotlib.rcParams['ytick.labelsize'] = 14
+matplotlib.rc('font',family=fontname)
+
+fontname='times new roman'
+hfont_mainticks = {'fontname':fontname,'fontsize':12}
+hfont_cbarticks = {'fontname':fontname,'fontsize':15}
+hfont_cbartitle = {'fontname':fontname,'fontsize':19}
+hfont_stanames  = {'fontname':fontname,'fontsize':12}
+
 
 class Bleteryevents:
     '''
@@ -165,8 +180,8 @@ class MDplot():
         fig,ax = plt.subplots(facecolor='w',figsize=(10.5,9))
          
         # Make titles
-        ax.set_xlabel('Seismic moment (N.m/s)')
-        ax.set_ylabel('Duration (s)')
+        ax.set_xlabel('Seismic moment (N.m/s)',fontsize=14)
+        ax.set_ylabel('Duration (s)',fontsize=14)
 
         # Save fig
         self.fig = fig
@@ -183,6 +198,7 @@ class MDplot():
         self.mwaxis()
         self.addisotimelines()
         self.addscalinglines()
+        self.addeqscalinglines()
         
         # All done
         return 
@@ -245,7 +261,7 @@ class MDplot():
         ax2 = self.ax.twiny()
         # set lims
         ax2.set_xlim((m0_to_mw(xmin),m0_to_mw(xmax)))
-        ax2.set_xlabel('Moment magnitude')
+        ax2.set_xlabel('Moment magnitude',fontsize=14)
         self.ax2 = ax2
 
         return
@@ -266,7 +282,7 @@ class MDplot():
         labels = ['1 second','1 minute','1 hour','1 day','1 month','1 year']
         for li,la in zip(lines,labels):
             ax.axhline(li,linestyle='--',color='k')
-            ax.text(xpos,li,la,va='center',ha='center',backgroundcolor='w')
+            ax.text(xpos,li,la,va='center',ha='center',backgroundcolor='w',fontsize=13)
 
         ax.set_xlim(10**xlims)
 
@@ -285,13 +301,41 @@ class MDplot():
         # Get lims for annotation postion
         xlims = np.array(self.ax.get_xlim())
         mo = np.logspace(np.log10(xlims[0]),np.log10(xlims[1]),100)
-
-        ax.loglog(mo,10**(np.log10(mo)-12),'k')
-        ax.loglog(mo,10**(np.log10(mo)-13),'k')
+        l1 = 10**(np.log10(mo)-12)
+        l2 = 10**(np.log10(mo)-13)
+        ax.fill_between(mo,l1,l2,color='gray',alpha=0.5)
+        #ax.loglog(mo,10**(np.log10(mo)-12),'k')
+        #ax.loglog(mo,10**(np.log10(mo)-13),'k')
 
         ax.set_xlim(xlims)
 
         return
+
+# ----------------------------------------------------------------------------------------------
+    def addeqscalinglines(self):
+        ''' 
+        Add the scaling law for earthquakes 
+        logMo = log T +12 
+        '''
+
+        # Get axes
+        ax = self.ax
+        
+        # Get lims for annotation postion
+        xlims = np.array(self.ax.get_xlim())
+        mo = np.logspace(np.log10(xlims[0]),np.log10(xlims[1]),100)
+
+        l1 = 10**(1./3.*np.log10(mo)-(16/3.))
+        l2 = 10**(1./3.*np.log10(mo)+(np.log10(0.02)-10/3.))
+        ax.fill_between(mo,l1,l2,color='gray',alpha=0.5)
+        
+        #ax.loglog(mo,10**(1./3.*np.log10(mo)-(16/3.)),'k')
+        #ax.loglog(mo,10**(1./3.*np.log10(mo)+(np.log10(0.02)-10/3.)),'k')
+
+        ax.set_xlim(xlims)
+
+        return
+
 
 # ----------------------------------------------------------------------------------------------
     def addpoints(self,m0,T,m0err=None,Terr=None,marker='+',color='orange'):
