@@ -15,8 +15,8 @@ import matplotlib
 fontname='times new roman'
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
-matplotlib.rcParams['xtick.labelsize'] = 14
-matplotlib.rcParams['ytick.labelsize'] = 14
+matplotlib.rcParams['xtick.labelsize'] = 11
+matplotlib.rcParams['ytick.labelsize'] = 11
 matplotlib.rc('font',family=fontname)
 
 fontname='times new roman'
@@ -63,7 +63,8 @@ class Gaoevents:
         slip       = []
         stressdrop = []
         reference  = []
-      
+        tokeep     = []
+
         # Store results
         for i in range(len(A)):
             # REGION
@@ -121,7 +122,6 @@ class Gaoevents:
                 reference.append(reference[-1])
             else:
                 reference.append(A[i,10].value)
-
     
         # Convert to arrays
         self.Np = len(region)
@@ -137,7 +137,7 @@ class Gaoevents:
         self.slip       = np.array(slip)
         self.stressdrop = np.array(stressdrop)
         self.reference  = np.array(reference)
-        
+ 
         # All done
         return
 
@@ -177,11 +177,12 @@ class MDplot():
     
     def __init__(self,show=False):
         # Create figure
-        fig,ax = plt.subplots(facecolor='w',figsize=(10.5,9))
+        #fig,ax = plt.subplots(facecolor='w',figsize=(10.5,9))
+        fig,ax = plt.subplots(facecolor='w',figsize=(5.25,4.5))
          
         # Make titles
-        ax.set_xlabel('Seismic moment (N.m/s)',fontsize=14)
-        ax.set_ylabel('Duration (s)',fontsize=14)
+        ax.set_xlabel('Seismic moment (N.m/s)',fontsize=11)
+        ax.set_ylabel('Duration (s)',fontsize=11)
 
         # Save fig
         self.fig = fig
@@ -233,7 +234,7 @@ class MDplot():
         data = Bleteryevents()
 
         # Plot them
-        self.ax.loglog(data.M0,data.duration,marker='s',linestyle='',c='olive',label='Bletery et al. (2016)')
+        self.ax.loglog(data.M0,data.duration,marker='.',linestyle='',c='k',label='Bletery et al. (2016)')
 
         return
 
@@ -242,9 +243,11 @@ class MDplot():
         '''
         Plot Ide et a. 2007 LFE MD
         '''
-        self.ax.scatter(10**(11.4),0.35,color='teal',s=2000,marker='s')
+        self.ax.scatter(10**(11.4),0.35,color='teal',s=1000,marker='s')
+        #self.ax.scatter(10**(11.4),0.35,color='teal',s=2000,marker='s')
         self.ax.scatter(10**(11.4),0.35,color='teal',s=50,marker='s',label='Ide et al. (2007)')
-        self.ax.scatter(10**(13.9),20,color='dodgerblue',s=300,marker='s')
+        self.ax.scatter(10**(13.9),20,color='dodgerblue',s=150,marker='s')
+        #self.ax.scatter(10**(13.9),20,color='dodgerblue',s=300,marker='s')
         self.ax.scatter(10**(13.9),20,color='dodgerblue',s=50,marker='s',label='Ito et al. (2007)')       
         return
 
@@ -261,7 +264,7 @@ class MDplot():
         ax2 = self.ax.twiny()
         # set lims
         ax2.set_xlim((m0_to_mw(xmin),m0_to_mw(xmax)))
-        ax2.set_xlabel('Moment magnitude',fontsize=14)
+        ax2.set_xlabel('Moment magnitude',fontsize=11)
         self.ax2 = ax2
 
         return
@@ -281,8 +284,8 @@ class MDplot():
         lines = [1.,60.,3600.,3600*24.,3600.*24*30.5,3600.*24*365]
         labels = ['1 second','1 minute','1 hour','1 day','1 month','1 year']
         for li,la in zip(lines,labels):
-            ax.axhline(li,linestyle='--',color='k')
-            ax.text(xpos,li,la,va='center',ha='center',backgroundcolor='w',fontsize=13)
+            ax.axhline(li,linestyle='--',color='k',lw=0.5)
+            ax.text(xpos,li,la,va='center',ha='center',backgroundcolor='w',fontsize=11)
 
         ax.set_xlim(10**xlims)
 
@@ -338,7 +341,7 @@ class MDplot():
 
 
 # ----------------------------------------------------------------------------------------------
-    def addpoints(self,m0,T,m0err=None,Terr=None,marker='+',color='orange'):
+    def addpoints(self,m0,T,m0err=None,Terr=None,marker='+',markersize=10,color='C3'):
         '''
         Add points on the plot
         Args:
@@ -352,9 +355,9 @@ class MDplot():
 
         # Plot that shit
         if (m0err is None)&(Terr is None):
-            self.ax.loglog(m0,T,marker=marker,linestyle='',c=color,label='This study') 
+            self.ax.loglog(m0,T,marker=marker,linestyle='',c=color,markersize=markersize,label='This study') 
         else:
-            self.ax.errorbar(m0,T,xerr=m0err,yerr=Terr,marker=marker,linestyle='',c=color,label='This study') 
+            self.ax.errorbar(m0,T,xerr=m0err,yerr=Terr,marker=marker,linestyle='',markersize=markersize,c=color,label='This study') 
         
         # All done   
         return
