@@ -1,5 +1,11 @@
 #!/usr/bin/env python3.6
 
+'''
+Small package design to prepare the 
+Grid-search for the phase-coherence
+B. Gombert - 2019
+'''
+
 import numpy as np
 import scipy
 import datetime
