@@ -1,5 +1,11 @@
 #!/usr/bin/env python3.6
 
+'''
+A set of function useful for tremor analysis in
+Cascadia.
+B. Gombert - 2019
+'''
+
 import numpy as np
 import datetime
 import obspy
