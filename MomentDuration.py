@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+'''
+Small module made by B. Gombert to make
+the moment-duration plot of slow slip events
+'''
+
 import numpy as np
 import ezodf
 import sys
