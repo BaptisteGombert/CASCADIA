@@ -3,6 +3,7 @@
 '''
 Small module made by B. Gombert to make
 the moment-duration plot of slow slip events
+B. Gombert - 2019
 '''
 
 import numpy as np
