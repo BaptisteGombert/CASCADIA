@@ -347,7 +347,7 @@ class MDplot():
 
 
 # ----------------------------------------------------------------------------------------------
-    def addpoints(self,m0,T,m0err=None,Terr=None,marker='+',markersize=10,color='C3'):
+    def addpoints(self,m0,T,m0err=None,Terr=None,marker='+',markersize=10,color='C3',label='This study'):
         '''
         Add points on the plot
         Args:
@@ -357,11 +357,12 @@ class MDplot():
             * Terr   : std of T values (def='None')
             * marker : markertype (def='+')
             * color  : color of marker (def='orange')
+            * label  : Label for the legend (def='This study')
         '''
 
         # Plot that shit
         if (m0err is None)&(Terr is None):
-            self.ax.loglog(m0,T,marker=marker,linestyle='',c=color,markersize=markersize,label='This study') 
+            self.ax.loglog(m0,T,marker=marker,linestyle='',c=color,markersize=markersize,label=label) 
         else:
             self.ax.errorbar(m0,T,xerr=m0err,yerr=Terr,marker=marker,linestyle='',markersize=markersize,c=color,label='This study') 
         
