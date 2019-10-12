@@ -364,7 +364,7 @@ class MDplot():
         if (m0err is None)&(Terr is None):
             self.ax.loglog(m0,T,marker=marker,linestyle='',c=color,markersize=markersize,label=label) 
         else:
-            self.ax.errorbar(m0,T,xerr=m0err,yerr=Terr,marker=marker,linestyle='',markersize=markersize,c=color,label='This study') 
+            self.ax.errorbar(m0,T,xerr=m0err,yerr=Terr,marker=marker,linestyle='',markersize=markersize,c=color,label=label) 
         
         # All done   
         return
